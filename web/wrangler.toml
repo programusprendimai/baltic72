@@ -1,0 +1,40 @@
+# Baltic72 marketing site — Cloudflare Worker + Static Assets.
+# Build with `npm run build`, then `npm run deploy`.
+
+name = "baltic72-web"
+main = "worker/index.ts"
+compatibility_date = "2025-05-01"
+# account_id is taken from your `wrangler login` (or set CLOUDFLARE_ACCOUNT_ID).
+# Kept out of this public repo to avoid exposing an account-specific identifier.
+
+[assets]
+directory = "./dist/client"
+binding = "ASSETS"
+# Always run the Worker first so it can handle redirects, then it forwards to
+# ASSETS for static serving.
+run_worker_first = true
+# Serve "/lt/index.html" at "/lt" (no trailing slash); "/lt/" → "/lt".
+html_handling = "drop-trailing-slash"
+not_found_handling = "none"
+
+# Primary domain. The baltic72.com zone is already on this account.
+[[routes]]
+pattern = "baltic72.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.baltic72.com"
+custom_domain = true
+
+# Alt domains → redirected to baltic72.com/{lang} by the Worker.
+[[routes]]
+pattern = "baltic72.lt"
+custom_domain = true
+
+[[routes]]
+pattern = "baltic72.lv"
+custom_domain = true
+
+[[routes]]
+pattern = "baltic72.eu"
+custom_domain = true

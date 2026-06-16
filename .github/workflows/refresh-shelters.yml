@@ -1,0 +1,72 @@
+name: Refresh shelter data → R2
+
+# Rebuilds the full normalized shelter snapshot (LT + EE + LV + PL) and publishes
+# it to Cloudflare R2, where the worker serves it at /shelters/{manifest,data}.
+# The app pulls updates over the air — no app release needed.
+#
+# Supersedes the commit-to-repo approach in refresh-pagd.yml (which bloats git
+# history with a ~55 MB JSON). Requires repo secrets:
+#   CLOUDFLARE_API_TOKEN   - token with R2 read/write on the account
+#   CLOUDFLARE_ACCOUNT_ID  - the Cloudflare account id
+# and a one-time `npx wrangler r2 bucket create baltic72-shelters`.
+
+on:
+  schedule:
+    # Weekly, Monday 04:30 UTC. Upstream sources refresh roughly weekly.
+    - cron: "30 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_DEPS: "pyogrio==0.11.1 pyproj==3.7.1 shapely==2.1.1 pyarrow==20.0.0"
+  WRANGLER_VERSION: "3.114.17"
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # This job publishes attacker-influenceable upstream data straight to the
+    # production R2 bucket the live app trusts. Gate it behind a GitHub
+    # Environment so a human must approve each run (including the scheduled
+    # ones). Maintainers MUST configure the "production" environment with
+    # required reviewers under Settings > Environments for this gate to work;
+    # without reviewers configured the job runs unblocked. workflow_dispatch
+    # still works (it will pause for approval like any other run).
+    environment: production
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install GDAL system libs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev gdal-bin
+
+      - name: Install Python dependencies
+        run: python -m pip install $PYTHON_DEPS
+
+      - name: Fetch + normalize all sources
+        run: |
+          python scripts/fetch-pagd.py
+          python scripts/fetch-shelters-intl.py
+          python scripts/build-manifest.py
+
+      - name: Set up Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "20"
+
+      - name: Publish snapshot to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx --yes "wrangler@$WRANGLER_VERSION" r2 object put baltic72-shelters/shelters.json \
+            --file data/seed/shelters.json --content-type application/json
+          npx --yes "wrangler@$WRANGLER_VERSION" r2 object put baltic72-shelters/manifest.json \
+            --file data/seed/shelters.manifest.json --content-type application/json

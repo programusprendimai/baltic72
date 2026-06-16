@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Open a secure Baltic72 family invite in the mobile app."
+    />
+    <title>Baltic72 family invite</title>
+    <link rel="icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/join/style.css" />
+    <script src="/join/open.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header" aria-label="Baltic72">
+      <a class="brand" href="/en" aria-label="Baltic72 home">
+        <img src="/app-icon.png" alt="" width="44" height="44" />
+        <span>Baltic72</span>
+      </a>
+      <a class="header-link" href="/en">Main site</a>
+    </header>
+
+    <main class="page-shell">
+      <section class="invite-panel" aria-labelledby="invite-title">
+        <div class="panel-copy">
+          <p class="eyebrow">Family safety status</p>
+          <h1 id="invite-title">Open your Baltic72 family invite</h1>
+          <p class="lead">
+            This secure, single-use invite opens in the Baltic72 app so you can
+            share safety status with people close to you during an emergency.
+          </p>
+          <div class="actions">
+            <a id="open-link" class="primary-action" href="baltic72://join">Open Baltic72</a>
+            <a class="secondary-action" href="/en">Back to Baltic72</a>
+          </div>
+          <p id="open-status" class="status-text" aria-live="polite">
+            If the app does not open automatically, use the button above.
+          </p>
+        </div>
+
+        <aside class="assurance-card" aria-label="Invite details">
+          <div>
+            <p class="detail-label">Invite type</p>
+            <p class="detail-value">Single-use family link</p>
+          </div>
+          <div>
+            <p class="detail-label">Privacy</p>
+            <p class="detail-value">Token is kept in this browser only until the app opens</p>
+          </div>
+          <div>
+            <p class="detail-label">Next step</p>
+            <p class="detail-value">Enter your name in the app to join the family group</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

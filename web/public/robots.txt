@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://baltic72.com/sitemap.xml

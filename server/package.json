@@ -1,0 +1,21 @@
+{
+  "name": "baltic72-family-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create baltic72_family",
+    "db:migrate": "wrangler d1 migrations apply baltic72_family --remote",
+    "db:migrate:local": "wrangler d1 migrations apply baltic72_family --local",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.6.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "typescript": "^5.6.2",
+    "wrangler": "^4.95.0"
+  }
+}

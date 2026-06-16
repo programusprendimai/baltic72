@@ -1,0 +1,91 @@
+# Baltic72 Family — Cloudflare Worker
+# Edge API + Durable Object fan-out for end-to-end-encrypted family status.
+# The server only ever stores ciphertext and public keys (see migrations).
+
+name = "baltic72-family"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+compatibility_flags = ["nodejs_compat"]
+upload_source_maps = true
+
+[vars]
+FCM_ANDROID_PACKAGE_NAME = "com.baltic72.app"
+# Apple Critical Alerts entitlement gate. Keep "false" until Apple grants the
+# entitlement for com.baltic72.app; while false, createAlert() coerces any
+# critical:true alert to time-sensitive (which needs no entitlement) so it does
+# not silently downgrade. Flip to "true" only after approval, then redeploy.
+APNS_CRITICAL_ENABLED = "false"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+
+[[routes]]
+pattern = "api.baltic72.com"
+custom_domain = true
+
+[secrets]
+required = [
+  "TICKET_SECRET",
+  "ADMIN_TOKEN",
+  "APNS_KEY_ID",
+  "APNS_TEAM_ID",
+  "APNS_BUNDLE_ID",
+  "APNS_PRIVATE_KEY",
+  "FCM_SERVICE_ACCOUNT_JSON"
+]
+
+# D1: serverless SQLite. Fill database_id after `wrangler d1 create` (see README).
+[[d1_databases]]
+binding = "DB"
+database_name = "baltic72_family"
+database_id = "3a15da7b-4194-4f2f-a52c-577a40d1a5c6"
+
+# R2: stores the normalized open-data shelter snapshot (manifest.json +
+# shelters.json), uploaded by the data pipeline / CI. Create it once with:
+#   npx wrangler r2 bucket create baltic72-shelters
+[[r2_buckets]]
+binding = "SHELTERS"
+bucket_name = "baltic72-shelters"
+
+# Queues: alert fan-out with retry + dead-letter capture.
+[[queues.producers]]
+binding = "ALERT_QUEUE"
+queue = "baltic72-alerts"
+
+[[queues.consumers]]
+queue = "baltic72-alerts"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 5
+dead_letter_queue = "baltic72-alerts-dlq"
+
+[[queues.consumers]]
+queue = "baltic72-alerts-dlq"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 0
+
+# Durable Object: one instance per family group, fans out live status over WS.
+[[durable_objects.bindings]]
+name = "GROUP"
+class_name = "FamilyGroup"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["FamilyGroup"]
+
+# TICKET_SECRET is a secret, NOT set here. Use:
+#   openssl rand -base64 32 | npx wrangler secret put TICKET_SECRET
+# Notification secrets are also NOT set here:
+#   npx wrangler secret put ADMIN_TOKEN
+#   npx wrangler secret put APNS_KEY_ID
+#   npx wrangler secret put APNS_TEAM_ID
+#   npx wrangler secret put APNS_BUNDLE_ID
+#   npx wrangler secret put APNS_PRIVATE_KEY
+#   npx wrangler secret put FCM_SERVICE_ACCOUNT_JSON

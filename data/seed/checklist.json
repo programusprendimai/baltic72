@@ -1,0 +1,20 @@
+[
+  { "id": "water", "category": "essentials", "sort_order": 1, "label_key": "checklist.water" },
+  { "id": "food", "category": "essentials", "sort_order": 2, "label_key": "checklist.food" },
+  { "id": "radio", "category": "essentials", "sort_order": 3, "label_key": "checklist.radio" },
+  { "id": "flashlight", "category": "essentials", "sort_order": 4, "label_key": "checklist.flashlight" },
+  { "id": "first_aid", "category": "essentials", "sort_order": 5, "label_key": "checklist.firstAid" },
+  { "id": "documents", "category": "essentials", "sort_order": 6, "label_key": "checklist.documents" },
+  { "id": "cash", "category": "essentials", "sort_order": 7, "label_key": "checklist.cash" },
+  { "id": "power_bank", "category": "essentials", "sort_order": 8, "label_key": "checklist.powerBank" },
+  { "id": "hygiene", "category": "essentials", "sort_order": 9, "label_key": "checklist.hygiene" },
+  { "id": "tools", "category": "essentials", "sort_order": 10, "label_key": "checklist.tools" },
+  { "id": "fire", "category": "essentials", "sort_order": 11, "label_key": "checklist.fire" },
+  { "id": "map_contacts", "category": "essentials", "sort_order": 12, "label_key": "checklist.mapContacts" },
+  { "id": "clothing", "category": "personal", "sort_order": 13, "label_key": "checklist.clothing" },
+  { "id": "sleeping", "category": "personal", "sort_order": 14, "label_key": "checklist.sleeping" },
+  { "id": "medications", "category": "personal", "sort_order": 15, "label_key": "checklist.medications" },
+  { "id": "mask", "category": "personal", "sort_order": 16, "label_key": "checklist.mask" },
+  { "id": "whistle", "category": "personal", "sort_order": 17, "label_key": "checklist.whistle" },
+  { "id": "pet_supplies", "category": "personal", "sort_order": 18, "label_key": "checklist.petSupplies" }
+]

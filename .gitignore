@@ -1,0 +1,75 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*-firebase-adminsdk-*.json
+*.mobileprovision
+*.keystore
+!android/app/debug.keystore
+keystore.properties
+android/keystore.properties
+credentials.json
+
+# Firebase Android config — carries the API key; keep a local copy, don't commit.
+google-services.json
+
+# Build artifacts — never commit (the AAB bundles the ~53 MB shelter DB)
+*.aab
+*.apk
+
+# Wrangler local dev state (D1/KV/R2 cache) — never commit
+server/.wrangler/
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Cloudflare Wrangler local secrets (never commit)
+.dev.vars
+server/.dev.vars
+
+# Large generated data — the 53 MB normalized seed is rebuilt from the open-data
+# sources via scripts/fetch-*.py. The prebuilt assets/db/baltic72.db is kept so
+# the app runs on a fresh clone. See scripts/ + server/README.md.
+/data/seed/shelters.json
+
+# AI-assistant / local dev instructions — not shipped
+CLAUDE.md
+AGENTS.md
+
+# Editor / local config — not shipped
+.claude/
+.vscode/
+.env
